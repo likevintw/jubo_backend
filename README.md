@@ -1,6 +1,11 @@
+### Introduce
+* Using golang echo as backend service.
+* Using MongoDB as database.
+* Using docker to setup MongoDB
+
 
 ### Run mongoDB
-```
+```bash
 docker run -d \
     -p 27017:27017 \
     -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
@@ -10,7 +15,7 @@ docker run -d \
     mongo:latest
 ```
 ### Prepare Data
-```
+```bash
 use db
 db.patients.createIndex( { "id": 1 }, { unique: true } )
 db.patients.insertMany(
@@ -62,4 +67,7 @@ db.patients.insertMany(
 
 db.patients.find().pretty()
 ```
-
+### Prepare Data
+```bash
+go run main.go
+```
