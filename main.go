@@ -97,7 +97,6 @@ func (h *EchoHandler) returnPatients(c echo.Context) error {
 		return c.JSON(400, err)
 	}
 	cur.Close(context.TODO())
-	fmt.Printf("Found multiple documents: %+v\n", results)
 	return c.JSON(http.StatusOK, results)
 
 }
