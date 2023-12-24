@@ -31,6 +31,11 @@ type patient struct {
 	Dialog  string "bson:`dialog`"
 }
 
+type receive struct {
+	Id     int    "bson:`id`"
+	Dialog string "bson:`dialog`"
+}
+
 func CreateEchoHandler() (*EchoHandler, error) {
 	e := echo.New()
 	e.Use(middleware.CORS())
@@ -63,7 +68,7 @@ type EchoHandler struct {
 
 func (h EchoHandler) RunHTTPServer() {
 	h.E.GET("/returnPatients", h.returnPatients)
-	h.E.GET("/updateDialog", h.updateDialog)
+	h.E.POST("/updateDialog", h.updateDialog)
 	h.E.Logger.Fatal(h.E.Start(":80"))
 }
 func (h *EchoHandler) returnPatients(c echo.Context) error {
@@ -104,13 +109,15 @@ func (h *EchoHandler) updateDialog(c echo.Context) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(json_map["id"])
-	fmt.Println(json_map["dialog"])
-
+	collection := h.client.Database("db").Collection("patients")
+	filter := bson.D{{"id", int(json_map["Id"].(float64))}}
+	update := bson.D{{"$set", bson.D{{"dialog", json_map["Dialog"]}}}}
+	_, err = collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		fmt.Println(err)
+	}
 	response := map[string]string{"message": "ok"}
-
 	return c.JSON(http.StatusOK, response)
-
 }
 
 func main() {
